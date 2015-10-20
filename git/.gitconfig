@@ -1,0 +1,14 @@
+[user]
+	name = childsb
+	email = bchilds@redhat.com
+[credential]
+	helper = osxkeychain
+[push]
+	default = simple
+[alias]
+  pu = !"git fetch origin -v; git fetch upstream -v; git merge upstream/master"
+[core]
+	autocrlf = false
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
