@@ -1,0 +1,54 @@
+Ceph:
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: ceph-pv
+  spec:
+    capacity:
+      storage: 1Gi
+    accessModes:
+      - ReadWriteOnce
+    rbd:
+      monitors:
+        - 10.1.0.2:6789
+      pool: rbd
+      image: foo
+      user: admin
+      secretRef:
+        name: ceph-secret
+      fsType: ext4
+      readOnly: false
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ceph-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ose-mysql-ceph
+  labels:
+    name: ose-mysql-ceph
+spec:
+  containers:
+    - image: busybox 
+      name: busybox-ceph
+      volumeMounts:
+        - name: cephvol
+          mountPath: /var/lib/mysql
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: foopass
+      securityContext:
+        fsGroup: 1000060005
+        runAsUser: 27
+        privileged: false
+  volumes:
+    - name: cephvol
+      persistentVolumeClaim:
+        claimName: "ceph-claim"

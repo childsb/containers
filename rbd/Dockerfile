@@ -19,7 +19,7 @@ FROM fedora
 MAINTAINER Jan Safranek jsafrane@redhat.com
 
 # Base Packages
-RUN yum install -y wget ceph ceph-fuse strace && yum clean all
+RUN yum install -y wget ceph ceph-fuse ceph-common strace && yum clean all
 
 # Get ports exposed
 EXPOSE 6789
