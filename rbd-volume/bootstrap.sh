@@ -38,6 +38,16 @@ sh ./osd.sh 1
 # Prepare a RBD volume
 # NOTE: we need Ceph kernel modules on the host!
 rbd import block foo
+echo "-------------------"
+echo "Connection info:"
+ip addr show eth0 | grep inet
+echo "-------------------"
+echo "Config:"
+cat /etc/ceph/ceph.conf
+echo "------------------"
+echo "Key (base32)"
+cat /etc/ceph/keyring
+echo "-----------------"
 
 echo "Ceph is ready"
 
