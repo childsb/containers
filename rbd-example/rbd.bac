@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    name: rbd-tester 
+  name: rbd-tester
+spec:
+  replicas: 1
+  selector:
+    name: rbd-tester-rc
+  template:
+    metadata:
+      labels:
+        name: rbd-tester-rc
+    spec:
+      restartPolicy: Always
+      containers:
+        - image: kubernetes/pause
+          name: rbd-tester
+          volumeMounts:
+            - name: rbd-vol
+              mountPath: /mnt/rbd
+      volumes:
+        - name: rbd-vol
+          rbd:
+            monitors: ['172.17.0.2:6789']
+            pool: rbd 
+            image: foo
+            user: admin 
+            secretRef:
+               name: 'ceph-secret'
+            keyring: ''
+            fsType: 'ext4'
+            readOnly: false
