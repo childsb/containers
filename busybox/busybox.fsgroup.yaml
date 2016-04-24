@@ -12,6 +12,13 @@ spec:
       volumeMounts:
         - name: cephvol
           mountPath: /mnt/pv-1
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: foopass
+      securityContext:
+        fsGroup: 1000060005
+        runAsUser: 27
+        privileged: false
   volumes:
     - name: cephvol
       persistentVolumeClaim:
