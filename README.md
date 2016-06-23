@@ -1,4 +1,4 @@
-# L33T hax0r guide to Building Kubernetes 
+# Building Kubernetes & deploy to EC2- L33T hax0r Guide
 
 Create a new EC2 instance.  download the pem, chmod it..
 
