@@ -63,14 +63,12 @@ hack/build-cross.sh
 
 This puts binaries in ~/dev/git/kubernetes/_output
 
-Copy the hack scripts to the node.. The cluster scripts aren't required, just use the build kubectl instead of kubectl.sh
+Copy the hack scripts to the node.. Use /kube/kubectl instead of kubectl.sh
 ```
-# scp  -i ~/.ssh/bchilds-devbox-2.pem -r cluster/ ec2-user@${EC2_MASTER}:/kube/cluster
 scp  -i ~/.ssh/bchilds-devbox-2.pem -r hack/ ec2-user@${EC2_MASTER}:/kube/hack
 ```
 OR
 ```
-# rsync -avzL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  cluster/ ec2-user@${EC2_MASTER}:/kube/cluster
 rsync -avzL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem" hack/ ec2-user@${EC2_MASTER}:/kube/hack
 
 ```
@@ -88,6 +86,9 @@ rsync -avzL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  _output/local/bi
 run the single node hack script using the binaries copied to /kube
 ```
 cd /kube
+export AWS_ACCESS_KEY_ID=yourkey
+export AWS_SECRET_ACCESS_KEY=<secret key> 
+export CLOUD_PROVIDER=aws
 
 ./hack/local-up-cluster.sh -o /kube/
 ```
