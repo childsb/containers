@@ -73,11 +73,11 @@ scp  -i ~/.ssh/bchilds-devbox-2.pem -r hack/ ec2-user@${EC2_MASTER}:/kube/hack
 
 Copy the local build (from build machine)
 ```
-scp  -i ~/.ssh/bchilds-devbox-2.pem  _output/local/bin/darwin/amd64/*  ec2-user@${EC2_MASTER}:/kube
+scp  -i ~/.ssh/bchilds-devbox-2.pem  _output/local/bin/linux/amd64*  ec2-user@${EC2_MASTER}:/kube
 ```
 OR
 ```
-rsync -avL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  _output/local/bin/darwin/amd64/* ec2-user@${EC2_MASTER}:/kube
+rsync -avL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  _output/local/bin/linux/amd64* ec2-user@${EC2_MASTER}:/kube
 ```
 
 run the single node hack script using the binaries copied to /kube
