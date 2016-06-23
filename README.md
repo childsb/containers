@@ -89,5 +89,5 @@ run the single node hack script using the binaries copied to /kube
 ```
 cd /kube
 
-./local-up-cluster.sh -o /kube/
+./hack/local-up-cluster.sh -o /kube/
 ```
