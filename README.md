@@ -1,6 +1,9 @@
 # Building Kubernetes & deploy to EC2
 
-Create a new EC2 instance.  download the pem, chmod it..  
+Create a new EC2 instance.  I used the free RHEL image as should all good people.
+
+download the pem, chmod it..  
+
 make sure you have a user with ID and KEY.  This user should have admin-ish permissions.
 
 Set a variable pointing to the instance for imediate gratification.
