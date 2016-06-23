@@ -1,6 +1,7 @@
 # Building Kubernetes & deploy to EC2
 
-Create a new EC2 instance.  download the pem, chmod it..
+Create a new EC2 instance.  download the pem, chmod it..  
+make sure you have a user with ID and KEY.  This user should have admin-ish permissions.
 
 Set a variable pointing to the instance for imediate gratification.
 
@@ -83,7 +84,7 @@ OR
 rsync -avzL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  _output/local/bin/linux/amd64/* ec2-user@${EC2_MASTER}:/kube
 ```
 
-run the single node hack script using the binaries copied to /kube
+run the single node hack script using the binaries copied to /kube .. i had to ```su``` to get this to work right 
 ```
 cd /kube
 export AWS_ACCESS_KEY_ID=yourkey
