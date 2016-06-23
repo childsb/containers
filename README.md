@@ -1,12 +1,12 @@
 
 # Building Kubernetes 
 
-on  mac run a new docker shell then
+on  mac run a new docker shell then (note we use build-cross.sh to make compatible binaries for linux)
 ```
 mkdir -p ~/dev/git/
 git clone https://github.com/childsb/kubernetes.git
 cd ~/dev/git/kubernetes
-hack/build-go.sh 
+hack/build-cross.sh 
 ```
 
 This puts binaries in /dev/git/kubernetes/_output
@@ -15,8 +15,8 @@ Now create a new EC2 instance.  download the pem, chmod it..
 set a variable for ease of use
 
 ```
-export EC2_MASTER=ec2-52-26-223-17.us-west-2.compute.amazonaws.com
 chmod 0600 ~/.ssh/bchilds-devbox-2.pem
+export EC2_MASTER=ec2-52-26-223-17.us-west-2.compute.amazonaws.com
 ssh ec2-user@${EC2_MASTER} -i ~/.ssh/bchilds-devbox-2.pem
 ```
 once on the box copy your authorized_key to the authorized_key on the node for easier access
@@ -28,6 +28,10 @@ mkdir -p /kube/
 copy the build of kube to your master node
 ```
 scp  -i ~/.ssh/bchilds-devbox-2.pem  _output/local/bin/darwin/amd64/*  ec2-user@${EC2_MASTER}:/kube
+```
+OR
+```
+rsync -avL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  _output/local/bin/darwin/amd64/* ec2-user@${EC2_MASTER}:/kube
 ```
 
 setup the nodes from scratch
@@ -58,7 +62,7 @@ cd ~
 curl -L  https://github.com/coreos/etcd/releases/download/v2.3.7/etcd-v2.3.7-linux-amd64.tar.gz -o etcd-v2.3.7-linux-amd64.tar.gz
 tar xzvf etcd-v2.3.7-linux-amd64.tar.gz
 cd etcd-v2.3.7-linux-amd64
-sudo cp etcd* /usr/local/bin/
+sudo cp etcd* /usr/bin/
 ```
 
 install etcd as a container for ease.. container wont work with the shell scripts
