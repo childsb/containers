@@ -93,6 +93,7 @@ cd /kube
 export AWS_ACCESS_KEY_ID=yourkey
 export AWS_SECRET_ACCESS_KEY=<secret key> 
 export CLOUD_PROVIDER=aws
+HOSTNAME_OVERRIDE=${EC2_MASTER}
 
 ./hack/local-up-cluster.sh -o /kube/
 ```
