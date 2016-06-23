@@ -22,7 +22,7 @@ ssh ec2-user@${EC2_MASTER} -i ~/.ssh/bchilds-devbox-2.pem
 once on the box copy your authorized_key to the authorized_key on the node for easier access
 make a directory for the kube binaries
 ```
-mkdir -p /kube
+mkdir -p /kube/
 ```
 
 copy the build of kube to your master node
@@ -67,10 +67,12 @@ sudo docker run -d -p 8001:8001 -p 5001:5001 quay.io/coreos/etcd:v0.4.6 -peer-ad
 ```
 copy the hack scripts to the node
 ```
-scp  -i ~/.ssh/bchilds-devbox-2.pem cluster/kubectl.sh ec2-user@${EC2_MASTER}:/kube
-scp  -i ~/.ssh/bchilds-devbox-2.pem hack/local-up-cluster.sh ec2-user@${EC2_MASTER}:/kube
+scp  -i ~/.ssh/bchilds-devbox-2.pem -r cluster/ ec2-user@${EC2_MASTER}:/kube/cluster
+scp  -i ~/.ssh/bchilds-devbox-2.pem -r hack/ ec2-user@${EC2_MASTER}:/kube/hack
 ```
 run the single node hack script using the binaries copied to /kube
 ```
-local-up-cluster.sh -o /kube/
+cd /kube
+
+./local-up-cluster.sh -o /kube/
 ```
