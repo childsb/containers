@@ -1,4 +1,4 @@
-# Building Kubernetes & deploy to EC2- L33T hax0r Guide
+# Building Kubernetes & deploy to EC2
 
 Create a new EC2 instance.  download the pem, chmod it..
 
@@ -68,7 +68,12 @@ Copy the hack scripts to the node
 scp  -i ~/.ssh/bchilds-devbox-2.pem -r cluster/ ec2-user@${EC2_MASTER}:/kube/cluster
 scp  -i ~/.ssh/bchilds-devbox-2.pem -r hack/ ec2-user@${EC2_MASTER}:/kube/hack
 ```
+OR
+```
+rsync -avzL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  cluster/ ec2-user@${EC2_MASTER}:/kube/cluster
+rsync -avzL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem" hack/ ec2-user@${EC2_MASTER}:/kube/hack
 
+```
 
 
 Copy the local build (from build machine)
@@ -77,7 +82,7 @@ scp  -i ~/.ssh/bchilds-devbox-2.pem  _output/local/bin/linux/amd64*  ec2-user@${
 ```
 OR
 ```
-rsync -avL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  _output/local/bin/linux/amd64* ec2-user@${EC2_MASTER}:/kube
+rsync -avzL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  _output/local/bin/linux/amd64/* ec2-user@${EC2_MASTER}:/kube
 ```
 
 run the single node hack script using the binaries copied to /kube
