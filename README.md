@@ -1,40 +1,22 @@
+# L33T hax0r guide to Building Kubernetes 
 
-# Building Kubernetes 
+Create a new EC2 instance.  download the pem, chmod it..
 
-on  mac run a new docker shell then (note we use build-cross.sh to make compatible binaries for linux)
-```
-mkdir -p ~/dev/git/
-git clone https://github.com/childsb/kubernetes.git
-cd ~/dev/git/kubernetes
-hack/build-cross.sh 
-```
-
-This puts binaries in /dev/git/kubernetes/_output
-
-Now create a new EC2 instance.  download the pem, chmod it..
-set a variable for ease of use
+Set a variable pointing to the instance for imediate gratification.
 
 ```
 chmod 0600 ~/.ssh/bchilds-devbox-2.pem
 export EC2_MASTER=ec2-52-26-223-17.us-west-2.compute.amazonaws.com
 ssh ec2-user@${EC2_MASTER} -i ~/.ssh/bchilds-devbox-2.pem
 ```
-once on the box copy your authorized_key to the authorized_key on the node for easier access
-make a directory for the kube binaries
+once on the box copy your public personal key to the authorized_key on the node for easier access.. or keep using the ec2 specific..
+
+## Setup the EC2 nodes from scratch
+
+Create a directory for the kube binaries (ec2 instance):
 ```
 mkdir -p /kube/
 ```
-
-copy the build of kube to your master node
-```
-scp  -i ~/.ssh/bchilds-devbox-2.pem  _output/local/bin/darwin/amd64/*  ec2-user@${EC2_MASTER}:/kube
-```
-OR
-```
-rsync -avL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  _output/local/bin/darwin/amd64/* ec2-user@${EC2_MASTER}:/kube
-```
-
-setup the nodes from scratch
 
 Install docker on RHEL
 ```
@@ -51,12 +33,12 @@ sudo yum install docker-engine
 sudo service docker start
 ```
 
-get the IP address of eth0
+Useful: get the IP address of eth0
 ```
 export IP_ADDR=`ip addr show eth0 | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
 ```
 
-get the etcd binary
+Install the etcd binary
 ```
 cd ~
 curl -L  https://github.com/coreos/etcd/releases/download/v2.3.7/etcd-v2.3.7-linux-amd64.tar.gz -o etcd-v2.3.7-linux-amd64.tar.gz
@@ -69,11 +51,35 @@ install etcd as a container for ease.. container wont work with the shell script
 ```
 sudo docker run -d -p 8001:8001 -p 5001:5001 quay.io/coreos/etcd:v0.4.6 -peer-addr 127.0.0.1:8001 -addr 127.0.0.1:5001 -name etcd-node1
 ```
-copy the hack scripts to the node
+
+## Build Locally 
+Back on build box run a new Docker shell (mac) then (note- use build-cross.sh to make compatible binaries for linux)
+```
+mkdir -p ~/dev/git/
+git clone https://github.com/childsb/kubernetes.git
+cd ~/dev/git/kubernetes
+hack/build-cross.sh 
+```
+
+This puts binaries in ~/dev/git/kubernetes/_output
+
+Copy the hack scripts to the node
 ```
 scp  -i ~/.ssh/bchilds-devbox-2.pem -r cluster/ ec2-user@${EC2_MASTER}:/kube/cluster
 scp  -i ~/.ssh/bchilds-devbox-2.pem -r hack/ ec2-user@${EC2_MASTER}:/kube/hack
 ```
+
+
+
+Copy the local build (from build machine)
+```
+scp  -i ~/.ssh/bchilds-devbox-2.pem  _output/local/bin/darwin/amd64/*  ec2-user@${EC2_MASTER}:/kube
+```
+OR
+```
+rsync -avL --progress -e "ssh -i ~/.ssh/bchilds-devbox-2.pem"  _output/local/bin/darwin/amd64/* ec2-user@${EC2_MASTER}:/kube
+```
+
 run the single node hack script using the binaries copied to /kube
 ```
 cd /kube
