@@ -1,18 +1,23 @@
 
 # Building Kubernetes 
 
-on my mac run a new docker shell then
+on  mac run a new docker shell then
 ```
+mkdir -p ~/dev/git/
+git clone https://github.com/childsb/kubernetes.git
 cd ~/dev/git/kubernetes
 hack/build-go.sh 
 ```
 
-This puts binaries in <kubedir>_output
+This puts binaries in /dev/git/kubernetes/_output
 
-create a new EC2 instance.  download the pem, chmod it
+Now create a new EC2 instance.  download the pem, chmod it..
+set a variable for ease of use
+
 ```
+export EC2_MASTER=ec2-52-26-223-17.us-west-2.compute.amazonaws.com
 chmod 0600 ~/.ssh/bchilds-devbox-2.pem
-ssh ec2-user@ec2-52-26-223-17.us-west-2.compute.amazonaws.com -i ~/.ssh/bchilds-devbox-2.pem
+ssh ec2-user@${EC2_MASTER} -i ~/.ssh/bchilds-devbox-2.pem
 ```
 once on the box copy your authorized_key to the authorized_key on the node for easier access
 make a directory for the kube binaries
@@ -22,7 +27,7 @@ mkdir -p /kube
 
 copy the build of kube to your master node
 ```
-scp  -i ~/.ssh/bchilds-devbox-2.pem  _output/local/bin/darwin/amd64/*  ec2-user@ec2-52-26-223-17.us-west-2.compute.amazonaws.com:/kube
+scp  -i ~/.ssh/bchilds-devbox-2.pem  _output/local/bin/darwin/amd64/*  ec2-user@${EC2_MASTER}:/kube
 ```
 
 setup the nodes from scratch
@@ -62,8 +67,8 @@ sudo docker run -d -p 8001:8001 -p 5001:5001 quay.io/coreos/etcd:v0.4.6 -peer-ad
 ```
 copy the hack scripts to the node
 ```
-scp  -i ~/.ssh/bchilds-devbox-2.pem cluster/kubectl.sh ec2-user@ec2-52-26-223-17.us-west-2.compute.amazonaws.com:/kube
-scp  -i ~/.ssh/bchilds-devbox-2.pem hack/local-up-cluster.sh ec2-user@ec2-52-26-223-17.us-west-2.compute.amazonaws.com:/kube
+scp  -i ~/.ssh/bchilds-devbox-2.pem cluster/kubectl.sh ec2-user@${EC2_MASTER}:/kube
+scp  -i ~/.ssh/bchilds-devbox-2.pem hack/local-up-cluster.sh ec2-user@${EC2_MASTER}:/kube
 ```
 run the single node hack script using the binaries copied to /kube
 ```
