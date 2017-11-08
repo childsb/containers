@@ -1,3 +1,4 @@
+# Copyright Bradley Childs 2017 (bchilds@gmail.com)
 # clones a git repo and adds the upstream fork
 # curl https://api.github.com/repos/childsb/kubernetes
 
@@ -72,15 +73,21 @@ parse_url() {
 
 detect_git_host() {
 
-	if  [ -z ${REPO_HOST} ]; then
+	if ! [ -z ${REPO_HOST} ]; then
+	  # if REPO_HOST set at this point it was done via arg, dont override it..
 	  return
 	fi
 	
+	# Set the default repo host..
+	REPO_HOST="github.com"
+	
 	if  [ "$repo" = "kubernetes" ]; then
-		echo "Found kubernetes, using k8s for repo"
 		REPO_HOST="k8s.io"
+		unset ORG_OVERIDE
+		echo "Found kubernetes, using $REPO_HOST for repo"
+		return
 	fi
-	REPO_HOST="github.org"
+	
 }
 
 setup_git() {
@@ -96,7 +103,8 @@ setup_git() {
 	if  [ "$GO_LANG" = true ]; then
 		# check for common repo over-rides
 		detect_git_host
-		echo "Cloning into $GOPATH instead of current directory .."
+		echo "Using git host ${REPO_HOST}"
+		echo "GOLANG specified, cloning into $GOPATH/src/ "
 		if ! [  -z ${ORG_OVERIDE} ]; then
 			echo "Using $ORG_OVERIDE instead of $ORG"       
 			mkdir -p  ${GOPATH}/src/${REPO_HOST}/${ORG_OVERIDE}
@@ -112,9 +120,9 @@ setup_git() {
 	cd $repo
 
 	if [ "$parent_url" == "null" ]; then
-		echo "Not setting upstream..."
+		echo "No upstream set."
 	else
-		echo "This repo appears to be a fork of: ${parent_url}.. Adding upstream remote"
+		echo "Adding upstream remote ${parent_url}"
 		git remote add upstream ${parent_url}
 	fi
 
@@ -165,6 +173,7 @@ fi
 # Parse the git URL into its pieces.
 parse_url $primary_repo
 setup_git
+echo "Cloned $primary_repo into `pwd`"
 
 # print_parsed
 
